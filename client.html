@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RegionTehsnab — Двигатели и КПП ВАЗ / Нива / ГАЗ</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f4f6f8;
+            color: #2b2d42;
+            line-height: 1.6;
+        }
+        header {
+            background: #1e293b;
+            color: #fff;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        header .logo { font-size: 22px; font-weight: 800; color: #e63946; text-decoration: none; }
+        header nav a { color: #cbd5e1; margin-left: 20px; text-decoration: none; font-size: 14px; }
+        header nav a:hover { color: #fff; }
+
+        .hero {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #fff;
+            padding: 60px 32px;
+            text-align: center;
+        }
+        .hero h1 { font-size: 36px; margin-bottom: 12px; font-weight: 800; }
+        .hero p { font-size: 18px; color: #94a3b8; max-width: 650px; margin: 0 auto 24px; }
+
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .section-title { font-size: 24px; margin-bottom: 20px; color: #1e293b; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e2e8f0;
+        }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .card-body { padding: 20px; }
+        .card-tag { background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; }
+        .card-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #0f172a; }
+        .card-price { font-size: 22px; font-weight: 800; color: #e63946; margin-bottom: 12px; }
+        .card-desc { font-size: 13px; color: #64748b; margin-bottom: 16px; }
+
+        footer { background: #0f172a; color: #64748b; padding: 30px; text-align: center; font-size: 13px; margin-top: 60px; }
+    </style>
+    <link rel="stylesheet" href="/chat_widget/chat.css?v=5">
+</head>
+<body>
+    <header>
+        <a href="#" class="logo">⚙️ RegionTehsnab</a>
+        <nav>
+            <a href="#">Двигатели ВАЗ</a>
+            <a href="#">КПП</a>
+            <a href="#">Доставка</a>
+            <a href="#">Контакты</a>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <h1>Официальный магазин двигателей и КПП ВАЗ</h1>
+        <p>Более 29 000 оригинальных агрегатов и комплектующих с заводской гарантией 6 месяцев и доставкой по всей России.</p>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title">Популярные категории агрегатов</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="card-body">
+                    <span class="card-tag">ХИТ ПРОДАЖ</span>
+                    <div class="card-title">Двигатель ВАЗ 21126 (1.6L 16V)</div>
+                    <div class="card-price">от 98 500 ₽</div>
+                    <div class="card-desc">Новый агрегат в сборе для Lada Priora / Kalina. Гарантия 6 месяцев.</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <span class="card-tag">В НАЛИЧИИ</span>
+                    <div class="card-title">Двигатель ВАЗ 21214 (1.7L Инжектор)</div>
+                    <div class="card-price">от 92 000 ₽</div>
+                    <div class="card-desc">Предназначен для Нивы 2121, 2131 и Urban. Подходит под ГУР / ЭУР.</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <span class="card-tag">ГАРАНТИЯ 6 МЕС</span>
+                    <div class="card-title">КПП ВАЗ 2107 (5-ступенчатая)</div>
+                    <div class="card-price">от 28 400 ₽</div>
+                    <div class="card-desc">Оригинальная трансмиссия для классики. Проверена на заводском стенде.</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <span class="card-tag">СПЕЦПРЕДЛОЖЕНИЕ</span>
+                    <div class="card-title">Двигатель ВАЗ 2111 (1.5L 8V)</div>
+                    <div class="card-price">от 74 900 ₽</div>
+                    <div class="card-desc">Надежный 8-клапанный двигатель для ВАЗ 2109, 2114, 2110.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        © 2026 RegionTehsnab. Все права защищены.
+    </footer>
+
+    <!-- Подключение автономного клиентского чат-виджета -->
+    <script src="/chat_widget/chat.js?v=5"></script>
+    <script>
+        // Автоматически определяем адрес API (работает на хостинге, туннеле или локально)
+        const currentApiUrl = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
+            ? 'http://127.0.0.1:8001'
+            : window.location.origin;
+
+        RTSChat.init({
+            apiUrl: currentApiUrl,
+            botName: 'Анна',
+            botStatus: 'Консультант онлайн',
+            welcomeMsg: 'Здравствуйте! Меня зовут Анна, я консультант магазина RegionTehsnab. Помогу подобрать двигатель или КПП, уточнить наличие и рассчитать доставку. Задайте ваш вопрос!'
+        });
+    </script>
+</body>
+</html>
