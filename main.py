@@ -295,23 +295,23 @@ def get_public_chat_messages(session_id: str):
 @app.get("/client")
 @app.get("/test")
 def get_client_ui():
-    return FileResponse("client.html")
+    return FileResponse(os.path.join(os.path.dirname(__file__), "client.html"))
 
 @app.get("/chat_widget/chat.js")
 def get_chat_widget_js():
-    return FileResponse("chat_widget/chat.js")
+    return FileResponse(os.path.join(os.path.dirname(__file__), "chat_widget/chat.js"))
 
 @app.get("/chat_widget/chat.css")
 def get_chat_widget_css():
-    return FileResponse("chat_widget/chat.css")
+    return FileResponse(os.path.join(os.path.dirname(__file__), "chat_widget/chat.css"))
 
 @app.get("/static/chat.js")
 def get_static_chat_js():
-    return FileResponse("static/chat.js")
+    return FileResponse(os.path.join(os.path.dirname(__file__), "static/chat.js"))
 
 @app.get("/static/chat.css")
 def get_static_chat_css():
-    return FileResponse("static/chat.css")
+    return FileResponse(os.path.join(os.path.dirname(__file__), "static/chat.css"))
 # Active websocket connections
 class ConnectionManager:
     def __init__(self):
@@ -470,19 +470,19 @@ async def assistant_chat_endpoint(payload: HTTPChatPayload, request: Request):
 @app.get("/admin/")
 @app.get("/admin.html")
 def get_admin_ui():
-    return FileResponse("admin/index.html")
+    return FileResponse(os.path.join(os.path.dirname(__file__), "admin/index.html"))
 
 @app.get("/admin/assistant.html")
 @app.get("/assistant.html")
 def get_assistant_ui():
-    return FileResponse("admin/assistant.html")
+    return FileResponse(os.path.join(os.path.dirname(__file__), "admin/assistant.html"))
 
 @app.get("/admin/db_viewer.html")
 @app.get("/db_viewer.html")
 def get_admin_db_viewer():
     import browse_database_and_chats
     browse_database_and_chats.generate_interactive_html_viewer()
-    return FileResponse("admin/db_viewer.html")
+    return FileResponse(os.path.join(os.path.dirname(__file__), "admin/db_viewer.html"))
 
 @app.get("/api/admin/sessions")
 @app.get("/admin/sessions")
