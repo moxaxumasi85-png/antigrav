@@ -8,7 +8,8 @@ from datetime import datetime
 
 # База данных наших сателлитов
 DB_FILE = "pbn_database.json"
-ENV_FILE = "../.env"
+script_dir_main = os.path.dirname(os.path.abspath(__file__))
+ENV_FILE = os.path.join(script_dir_main, "..", ".env")
 
 def load_db():
     if os.path.exists(DB_FILE):
@@ -25,7 +26,8 @@ def get_available_platforms():
     platforms = []
     
     # Firebase (проверяем наличие JSON-ключа)
-    if os.path.exists("../firebase-adminsdk.json"):
+    creds_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'firebase-adminsdk.json')
+    if os.path.exists(creds_path):
         platforms.append("firebase")
         
     # Парсим .env для Netlify/Vercel
@@ -37,11 +39,11 @@ def get_available_platforms():
                 platforms.append("netlify")
             if "VERCEL_API_KEY=" in content:
                 platforms.append("vercel")
-            if "SURGE_TOKEN=" in content:
+            # if "SURGE_TOKEN=" in content:
                 platforms.append("surge")
             if "CLOUDFLARE_API_TOKEN=" in content:
                 platforms.append("cloudflare")
-            if "GITHUB_PAT=" in content or "GITHUB_TOKEN=" in content:
+            # if "GITHUB_PAT=" in content or "GITHUB_TOKEN=" in content:
                 platforms.append("github")
             if "GITLAB_PAT=" in content:
                 platforms.append("gitlab")
@@ -84,13 +86,15 @@ def mass_generate_and_deploy(num_sites=1, platform="random"):
         script_dir = os.path.dirname(os.path.abspath(__file__))
         builder_script = os.path.join(script_dir, "builder.py")
         
-        builder_proc = subprocess.run(["python", builder_script], capture_output=True, text=True, cwd=script_dir)
+        import uuid
+        site_id = f"satellite_{uuid.uuid4().hex[:8]}"
+        site_dir = os.path.join(script_dir, "output_sites", site_id)
+        
+        builder_proc = subprocess.run(["python", builder_script, site_dir], capture_output=True, text=True, cwd=script_dir)
         if builder_proc.returncode != 0:
             print("[-] Ошибка при генерации:")
             print(builder_proc.stderr)
             continue
-            
-        site_dir = os.path.join(script_dir, "output_sites", "satellite_1")
         
         # 2. Деплой на платформу
         print(f"[*] Деплой в сеть (Платформа: {current_platform})...")
