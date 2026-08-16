@@ -43,6 +43,10 @@ def get_available_platforms():
                 platforms.append("cloudflare")
             if "GITHUB_PAT=" in content:
                 platforms.append("github")
+            if "GITLAB_PAT=" in content:
+                platforms.append("gitlab")
+            if "NEOCITIES_API_KEY=" in content:
+                platforms.append("neocities")
         except Exception:
             pass
             
@@ -111,7 +115,7 @@ def mass_generate_and_deploy(num_sites=1, platform="random"):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Mass Deploy PBN Sites")
     parser.add_argument("--count", type=int, default=1, help="Количество сайтов для генерации")
-    parser.add_argument("--platform", type=str, choices=["random", "surge", "netlify", "vercel", "firebase", "cloudflare", "github"], default="random", help="Платформа для публикации")
+    parser.add_argument("--platform", type=str, choices=["random", "surge", "netlify", "vercel", "firebase", "cloudflare", "github", "gitlab", "neocities"], default="random", help="Платформа для публикации")
     args = parser.parse_args()
     
     mass_generate_and_deploy(args.count, args.platform)
