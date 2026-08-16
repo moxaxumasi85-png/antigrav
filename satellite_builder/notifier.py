@@ -1,19 +1,26 @@
 import os
 import sys
+import json
 import firebase_admin
 from firebase_admin import credentials, messaging
 
 # Инициализация Firebase
 CREDS_PATH = "../firebase-adminsdk.json"
-if not os.path.exists(CREDS_PATH):
-    print(f"Ошибка: Не найден файл {CREDS_PATH}")
-    sys.exit(1)
+cred = None
 
-cred = credentials.Certificate(CREDS_PATH)
-try:
-    firebase_admin.initialize_app(cred)
-except ValueError:
-    pass # Уже инициализировано
+if "FIREBASE_ADMINSDK_JSON" in os.environ:
+    cred_dict = json.loads(os.environ["FIREBASE_ADMINSDK_JSON"])
+    cred = credentials.Certificate(cred_dict)
+elif os.path.exists(CREDS_PATH):
+    cred = credentials.Certificate(CREDS_PATH)
+else:
+    print(f"Внимание: Не найден файл {CREDS_PATH} и переменная FIREBASE_ADMINSDK_JSON. Push-уведомления работать не будут.")
+
+if cred:
+    try:
+        firebase_admin.initialize_app(cred)
+    except ValueError:
+        pass # Уже инициализировано
 
 def send_push_to_topic(topic, title, body, url=None):
     """Отправляет пуш-уведомление всем подписчикам топика"""
