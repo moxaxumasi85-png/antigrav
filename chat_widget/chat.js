@@ -208,10 +208,10 @@
 
     // ===== ИСТОРИЯ И ПОЛЛИНГ =====
     function getApiEndpoint(path, legacyAction) {
-        if (CONFIG.apiUrl.includes('trycloudflare.com') || CONFIG.apiUrl.includes('87.228.52.250')) {
-            return CONFIG.apiUrl + path;
+        if (path === '/chat') {
+            return CONFIG.apiUrl + '/api/chat';
         }
-        return CONFIG.apiUrl + '?action=' + legacyAction;
+        return CONFIG.apiUrl + path;
     }
 
     var pendingHistoryMessages = null;
