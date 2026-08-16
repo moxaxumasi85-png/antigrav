@@ -207,27 +207,31 @@ def get_client_and_model():
             return OpenAI(api_key=key, base_url="https://openrouter.ai/api/v1"), model
             
     elif provider == "gigachat":
-        auth = os.getenv("GIGACHAT_AUTH")
-        if auth:
-            try:
-                url = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
-                headers = {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json',
-                    'RqUID': str(uuid.uuid4()),
-                    'Authorization': f'Basic {auth}'
-                }
-                ctx = ssl.create_default_context()
-                ctx.check_hostname = False
-                ctx.verify_mode = ssl.CERT_NONE
-                req = urllib.request.Request(url, data=b'scope=GIGACHAT_API_PERS', headers=headers, method='POST')
-                with urllib.request.urlopen(req, context=ctx, timeout=5) as response:
-                    token = json.loads(response.read().decode('utf-8')).get("access_token")
-                    import httpx
-                    http_client = httpx.Client(verify=False)
-                    return OpenAI(api_key=token, base_url="https://gigachat.devices.sberbank.ru/api/v1", http_client=http_client), "GigaChat"
-            except Exception as e:
-                print(f"Ошибка авторизации GigaChat: {e}")
+        auth_str = os.getenv("GIGACHAT_AUTH")
+        if auth_str:
+            import random
+            auth_keys = [k.strip() for k in auth_str.split(',') if k.strip()]
+            random.shuffle(auth_keys)
+            for auth in auth_keys:
+                try:
+                    url = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
+                    headers = {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/json',
+                        'RqUID': str(uuid.uuid4()),
+                        'Authorization': f'Basic {auth}'
+                    }
+                    ctx = ssl.create_default_context()
+                    ctx.check_hostname = False
+                    ctx.verify_mode = ssl.CERT_NONE
+                    req = urllib.request.Request(url, data=b'scope=GIGACHAT_API_PERS', headers=headers, method='POST')
+                    with urllib.request.urlopen(req, context=ctx, timeout=5) as response:
+                        token = json.loads(response.read().decode('utf-8')).get("access_token")
+                        import httpx
+                        http_client = httpx.Client(verify=False)
+                        return OpenAI(api_key=token, base_url="https://gigachat.devices.sberbank.ru/api/v1", http_client=http_client), "GigaChat"
+                except Exception as e:
+                    print(f"Ошибка авторизации GigaChat (ключ {auth[:10]}...): {e}")
 
     # Фолбэк, если провайдер не найден или произошла ошибка
     print(f"Провайдер {provider} не настроен корректно. Проверьте .env")
