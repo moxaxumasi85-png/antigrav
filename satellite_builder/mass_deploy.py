@@ -41,12 +41,20 @@ def get_available_platforms():
                 platforms.append("surge")
             if "CLOUDFLARE_API_TOKEN=" in content:
                 platforms.append("cloudflare")
-            if "GITHUB_PAT=" in content:
+            if "GITHUB_PAT=" in content or "GITHUB_TOKEN=" in content:
                 platforms.append("github")
             if "GITLAB_PAT=" in content:
                 platforms.append("gitlab")
             if "NEOCITIES_API_KEY=" in content:
                 platforms.append("neocities")
+            if "FTP_HOST=" in content:
+                platforms.append("ftp")
+            if "CF_R2_ACCESS_KEY_ID=" in content:
+                platforms.append("s3")
+            if "BITBUCKET_USERNAME=" in content:
+                platforms.append("bitbucket")
+            if "RENDER_API_KEY=" in content:
+                platforms.append("render")
         except Exception:
             pass
             
@@ -73,17 +81,21 @@ def mass_generate_and_deploy(num_sites=1, platform="random"):
         
         # 1. Генерация сателлита
         print("[*] Генерация контента...")
-        builder_proc = subprocess.run(["python", "builder.py"], capture_output=True, text=True)
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        builder_script = os.path.join(script_dir, "builder.py")
+        
+        builder_proc = subprocess.run(["python", builder_script], capture_output=True, text=True, cwd=script_dir)
         if builder_proc.returncode != 0:
             print("[-] Ошибка при генерации:")
             print(builder_proc.stderr)
             continue
             
-        site_dir = "output_sites/satellite_1" 
+        site_dir = os.path.join(script_dir, "output_sites", "satellite_1")
         
         # 2. Деплой на платформу
         print(f"[*] Деплой в сеть (Платформа: {current_platform})...")
-        deploy_proc = subprocess.run(["python", "deployer.py", "--site", site_dir, "--platform", current_platform], capture_output=True, text=True)
+        deployer_script = os.path.join(script_dir, "deployer.py")
+        deploy_proc = subprocess.run(["python", deployer_script, "--site", site_dir, "--platform", current_platform], capture_output=True, text=True, cwd=script_dir)
         
         url = None
         for line in deploy_proc.stdout.split('\n'):
