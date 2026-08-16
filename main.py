@@ -638,8 +638,6 @@ async def create_order(request: Request):
         try:
             import threading
             # Append path to import notifier from satellite_builder
-            import sys
-            import os
             builder_path = os.path.join(os.path.dirname(__file__), "satellite_builder")
             if builder_path not in sys.path:
                 sys.path.append(builder_path)
