@@ -9,3 +9,5 @@ pymysql
 python-dotenv
 firebase-admin
 requests
+
+pymysql
