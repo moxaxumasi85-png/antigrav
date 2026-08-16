@@ -363,12 +363,22 @@ def _generate_reply_internal(history: list, user_message: str, source_site: str 
                 parsed_name = name_match.group(0)
 
             if parsed_phone or parsed_name or parsed_passport:
+                sess_id = history[0].get("session_id", "web_unknown") if (history and "session_id" in history[0]) else "web_unknown"
+                import db
                 db.update_session_requisites(
-                    session_id=session_history[0].get("session_id", "web_unknown") if session_history else "web_unknown",
+                    session_id=sess_id,
                     phone=parsed_phone,
                     client_name=parsed_name,
                     passport=parsed_passport
                 )
+            
+            # Extract product name from quick reply button text
+            product_match = re.search(r'хочу оформить заявку на (.*?)(?: по цене (.*))?$', user_message, re.IGNORECASE)
+            if product_match:
+                sess_id = history[0].get("session_id", "web_unknown") if (history and "session_id" in history[0]) else "web_unknown"
+                import db
+                db.update_session_requisites(session_id=sess_id, order_details=product_match.group(1).strip())
+                
         except Exception as e_req:
             print(f"[Requisites Extract Exception]: {e_req}")
 
@@ -378,33 +388,58 @@ def _generate_reply_internal(history: list, user_message: str, source_site: str 
         if invoice_trigger:
             try:
                 import invoice_generator
-                # Парсим город или имя
-                client_name = "Покупатель (Физ. лицо)"
-                city_name = "Ярославль"
-                phone_num = "+7 (900) 000-00-00"
+                import db
+                sess_id = history[0].get("session_id", "web_unknown") if (history and "session_id" in history[0]) else "web_unknown"
                 
-                # Попробуем найти ФИО или ИНН
+                # Попробуем найти город или имя
+                client_name = "Покупатель (Физ. лицо)"
+                city_name = "Уточняется"
+                phone_num = "Не указан"
+                passport_val = ""
+                
+                # Fetch existing requisites from DB
+                conn = db.sqlite3.connect(db.DB_PATH)
+                conn.row_factory = db.sqlite3.Row
+                cursor = conn.cursor()
+                cursor.execute('SELECT client_name, city, phone, passport, inn, order_details FROM sessions WHERE session_id = ?', (sess_id,))
+                row = cursor.fetchone()
+                order_items = [{"name": "Двигатель (модель уточняется)", "price": 0, "quantity": 1}]
+                if row:
+                    if row['client_name']: client_name = row['client_name']
+                    if row['city']: city_name = row['city']
+                    if row['phone']: phone_num = row['phone']
+                    if row['passport']: passport_val = row['passport']
+                    inn_val = row['inn'] or ""
+                    if row['order_details']:
+                        # Remove prices or random characters
+                        clean_name = row['order_details'].replace("Здравствуйте! Я хочу оформить заявку на ", "")
+                        order_items = [{"name": clean_name, "price": 0, "quantity": 1}]
+                else:
+                    inn_val = ""
+                conn.close()
+
+                # Обновляем, если есть новые в текущем сообщении
                 inn_match = re.search(r'\b\d{10}\b|\b\d{12}\b', user_message)
-                inn_val = inn_match.group(0) if inn_match else ""
+                if inn_match: inn_val = inn_match.group(0)
                 
                 name_match = re.search(r'([А-ЯЁ][а-яё]+\s+[А-ЯЁ][а-яё]+(?:\s+[А-ЯЁ][а-яё]+)?)', user_message)
-                if name_match:
+                if name_match and client_name == "Покупатель (Физ. лицо)":
                     client_name = name_match.group(0)
 
                 inv_res = invoice_generator.generate_invoice(
-                    session_id="chat_session",
+                    session_id=sess_id,
                     client_name=client_name,
                     phone=phone_num,
                     city=city_name,
-                    items=[
-                        {"name": "Двигатель ВАЗ-21126 1.6 16V с навесным оборудованием", "price": 152400, "quantity": 1},
-                        {"name": "Скидка (без маховика)", "price": -1000, "quantity": 1}
-                    ],
+                    items=order_items,
                     is_b2b=bool(inn_val),
                     inn=inn_val,
-                    shipping_cost=5730
+                    passport=passport_val,
+                    shipping_cost=0
                 )
                 invoice_info = inv_res["chat_text"]
+                # Also include the link to the generated invoice file
+                invoice_info += f"\n\n[Скачать или просмотреть ваш счет на оплату можно по этой ссылке](/invoices/{inv_res['invoice_num']}.html)"
             except Exception as e_inv:
                 print(f"[Invoice Generation Exception]: {e_inv}")
 
