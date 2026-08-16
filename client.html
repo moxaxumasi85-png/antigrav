@@ -58,6 +58,21 @@
         .card-desc { font-size: 13px; color: #64748b; margin-bottom: 16px; }
 
         footer { background: #0f172a; color: #64748b; padding: 30px; text-align: center; font-size: 13px; margin-top: 60px; }
+        .buy-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #e63946;
+            color: #fff;
+            text-align: center;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        .buy-btn:hover { background: #d62828; }
     </style>
     <link rel="stylesheet" href="/chat_widget/chat.css?v=5">
 </head>
@@ -65,10 +80,10 @@
     <header>
         <a href="#" class="logo">⚙️ RegionTehsnab</a>
         <nav>
-            <a href="#">Двигатели ВАЗ</a>
-            <a href="#">КПП</a>
-            <a href="#">Доставка</a>
-            <a href="#">Контакты</a>
+            <a href="#" onclick="RTSChat.sendQuick('Какие двигатели ВАЗ есть в наличии?'); return false;">Двигатели ВАЗ</a>
+            <a href="#" onclick="RTSChat.sendQuick('Какие КПП есть в наличии?'); return false;">КПП</a>
+            <a href="#" onclick="RTSChat.sendQuick('Рассчитать доставку'); return false;">Доставка</a>
+            <a href="#" onclick="RTSChat.openWindow(); return false;">Контакты</a>
         </nav>
     </header>
 
@@ -86,6 +101,7 @@
                     <div class="card-title">Двигатель ВАЗ 21126 (1.6L 16V)</div>
                     <div class="card-price">от 98 500 ₽</div>
                     <div class="card-desc">Новый агрегат в сборе для Lada Priora / Kalina. Гарантия 6 месяцев.</div>
+                    <button class="buy-btn" onclick="orderProduct('Двигатель ВАЗ 21126 (1.6L 16V)', 'от 98 500 ₽')">Оформить заявку</button>
                 </div>
             </div>
             <div class="card">
@@ -94,6 +110,7 @@
                     <div class="card-title">Двигатель ВАЗ 21214 (1.7L Инжектор)</div>
                     <div class="card-price">от 92 000 ₽</div>
                     <div class="card-desc">Предназначен для Нивы 2121, 2131 и Urban. Подходит под ГУР / ЭУР.</div>
+                    <button class="buy-btn" onclick="orderProduct('Двигатель ВАЗ 21214 (1.7L Инжектор)', 'от 92 000 ₽')">Оформить заявку</button>
                 </div>
             </div>
             <div class="card">
@@ -102,6 +119,7 @@
                     <div class="card-title">КПП ВАЗ 2107 (5-ступенчатая)</div>
                     <div class="card-price">от 28 400 ₽</div>
                     <div class="card-desc">Оригинальная трансмиссия для классики. Проверена на заводском стенде.</div>
+                    <button class="buy-btn" onclick="orderProduct('КПП ВАЗ 2107 (5-ступенчатая)', 'от 28 400 ₽')">Оформить заявку</button>
                 </div>
             </div>
             <div class="card">
@@ -110,6 +128,7 @@
                     <div class="card-title">Двигатель ВАЗ 2111 (1.5L 8V)</div>
                     <div class="card-price">от 74 900 ₽</div>
                     <div class="card-desc">Надежный 8-клапанный двигатель для ВАЗ 2109, 2114, 2110.</div>
+                    <button class="buy-btn" onclick="orderProduct('Двигатель ВАЗ 2111 (1.5L 8V)', 'от 74 900 ₽')">Оформить заявку</button>
                 </div>
             </div>
         </div>
@@ -133,6 +152,13 @@
             botStatus: 'Консультант онлайн',
             welcomeMsg: 'Здравствуйте! Меня зовут Анна, я консультант магазина RegionTehsnab. Помогу подобрать двигатель или КПП, уточнить наличие и рассчитать доставку. Задайте ваш вопрос!'
         });
+
+        function orderProduct(name, price) {
+            RTSChat.openWindow();
+            setTimeout(function() {
+                RTSChat.sendQuick('Здравствуйте! Я хочу оформить заявку на ' + name + ' по цене ' + price);
+            }, 300);
+        }
     </script>
 </body>
 </html>
