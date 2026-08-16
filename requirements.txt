@@ -5,3 +5,7 @@ pydantic
 openai
 google-generativeai
 jinja2
+pymysql
+python-dotenv
+firebase-admin
+requests
