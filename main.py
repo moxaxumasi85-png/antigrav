@@ -633,6 +633,26 @@ async def create_order(request: Request):
             t.start()
         except Exception as e_mail:
             print(f"[Triple Defense] Email notification failed: {e_mail}")
+            
+        # LEVEL 4: WEB PUSH NOTIFICATION (MANAGER)
+        try:
+            import threading
+            # Append path to import notifier from satellite_builder
+            import sys
+            import os
+            builder_path = os.path.join(os.path.dirname(__file__), "satellite_builder")
+            if builder_path not in sys.path:
+                sys.path.append(builder_path)
+            
+            import notifier
+            push_title = "💰 Новый заказ мотора (PBN)"
+            push_body = f"Имя: {client_name}\nТелефон: {phone}\nЗаказ: {order_details}"
+            
+            t_push = threading.Thread(target=notifier.send_push_to_topic, args=("manager_alerts", push_title, push_body, "https://dev.regiontehsnab.ru/chat/admin.html"))
+            t_push.daemon = True
+            t_push.start()
+        except Exception as e_push:
+            print(f"[Triple Defense] Push notification failed: {e_push}")
         
         return {"status": "ok", "order_id": session_id, "message": "Order created successfully"}
     except Exception as e:
