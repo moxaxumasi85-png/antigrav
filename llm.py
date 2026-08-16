@@ -429,14 +429,13 @@ def _generate_reply_internal(history: list, user_message: str, source_site: str 
             context_str += "\n\nИнформация о доставке (Используй ее для ответа клиенту!):\n" + shipping_info
         
         sys_prompt = get_system_prompt(source_site, is_assistant)
-        messages = [{"role": "system", "content": sys_prompt}]
         
         if context_str:
-            messages.append({"role": "system", "content": "ДАННЫЕ И ЦЕНЫ ИЗ КАТАЛОГА / РАСЧЕТ ДОСТАВКИ ИЛИ СЧЕТ:\n" + context_str})
+            sys_prompt += "\n\nДАННЫЕ И ЦЕНЫ ИЗ КАТАЛОГА / РАСЧЕТ ДОСТАВКИ ИЛИ СЧЕТ:\n" + context_str
 
         score = score_lead(history, user_message)
         print(f"[Lead Scoring] Оценка теплоты клиента: {score}/10")
-        messages.append({"role": "system", "content": f"ТЕКУЩАЯ ТЕМПЕРАТУРА КЛИЕНТА: {score}/10. Адаптируй свой ответ согласно правилу в SYS_PROMPT."})
+        sys_prompt += f"\n\nТЕКУЩАЯ ТЕМПЕРАТУРА КЛИЕНТА: {score}/10. Адаптируй свой ответ согласно правилу в SYS_PROMPT."
         
         # Формируем 100% ВСЮ ИСТОРИЮ сообщений сессии без каких-либо обрезаний
         history_summary_lines = []
@@ -447,10 +446,9 @@ def _generate_reply_internal(history: list, user_message: str, source_site: str 
             history_summary_lines.append(f"- [{msg['timestamp']}] {sender_label}: {msg['content']}")
             
         if history_summary_lines:
-            messages.append({
-                "role": "system", 
-                "content": "ПОЛНАЯ ИСТОРИЯ ВСЕЙ ПЕРЕПИСКИ С ЭТИМ КЛИЕНТОМ С САМОГО НАЧАЛА ДИАЛОГА (Помни абсолютно все детали, моторы, скидки, город и паспортные данные!):\n" + "\n".join(history_summary_lines)
-            })
+            sys_prompt += "\n\nПОЛНАЯ ИСТОРИЯ ВСЕЙ ПЕРЕПИСКИ С ЭТИМ КЛИЕНТОМ С САМОГО НАЧАЛА ДИАЛОГА (Помни абсолютно все детали, моторы, скидки, город и паспортные данные!):\n" + "\n".join(history_summary_lines)
+
+        messages = [{"role": "system", "content": sys_prompt}]
 
         # Передаем до 40 последних диалоговых сообщений напрямую для идеально связного контекста
         for msg in context_history[-40:]:
@@ -464,8 +462,12 @@ def _generate_reply_internal(history: list, user_message: str, source_site: str 
             models_to_try = [model_name, "groq/llama-3.1-8b-instant", "groq/mixtral-8x7b-32768"]
         elif provider == "cloudflare":
             models_to_try = [model_name, "@cf/meta/llama-3-8b-instruct", "@cf/meta/llama-3.1-8b-instruct"]
-        else:
+        elif provider == "openrouter":
+            models_to_try = [model_name, "meta-llama/llama-3.1-8b-instruct:free", "mistralai/mixtral-8x7b-instruct"]
+        elif provider == "groq":
             models_to_try = [model_name, "llama-3.1-8b-instant", "mixtral-8x7b-32768"]
+        else:
+            models_to_try = [model_name]
             
         response = None
         last_error = None
